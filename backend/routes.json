@@ -22,47 +22,8 @@
             "test": {
                 "active": false
             },
-            "anime": {
-                "gallery": {
-                    "active": true
-                },
-                "detail": {
-                    "active": true
-                },
-                "refresh": {
-                    "active": true
-                }
-            },
-            "rss": {
-                "add": {
-                    "active": true
-                },
-                "meta": {
-                    "active": true
-                },
-                "all": {
-                    "active": true
-                },
-                "scan": {
-                    "active": true
-                },
-                "delete": {
-                    "active": true
-                },
-                "update": {
-                    "subscribe": {
-                        "active": true
-                    }
-                }
-            },
-            "torrent": {
-                "scan": {
-                    "active": true
-                },
-                "toggle": {
-                    "active": true
-                },
-                "cancel": {
+            "equipment": {
+                "list": {
                     "active": true
                 }
             },

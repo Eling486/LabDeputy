@@ -40,7 +40,7 @@ defineProps({
   right: 0;
   bottom: 0;
   background-color: $ea-white;
-  z-index: 9998;
+  z-index: 998;
 }
 .loading-icon {
   color: ea-main(8);

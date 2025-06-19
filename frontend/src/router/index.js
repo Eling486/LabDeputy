@@ -17,8 +17,8 @@ const router = createRouter({
     },
     {
       path: '/booking',
-      name: 'storage',
-      component: () => import('../pages/HomePage.vue')
+      name: 'booking',
+      component: () => import('../pages/BookingPage.vue')
     },
     {
       path: '/storage',

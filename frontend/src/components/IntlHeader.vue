@@ -9,6 +9,9 @@ Eling486
         <RouterLink v-for="router in routers" :key="router" class="nav-item" :to="router.url">{{
           langs[settings.lang].header[router.text]
         }}</RouterLink>
+        <RouterLink v-if="userData.is_admin" class="nav-item" to="/admin">{{
+          langs[settings.lang].header.admin
+        }}</RouterLink>
       </div>
     </nav>
     <div class="nav-right">
@@ -82,25 +85,6 @@ const onLogout = () => {
   logout()
   location.reload()
 }
-
-const refreshNav = () => {
-  if (userData.value && userData.value.is_admin) {
-    routers.value.push({
-      url: '/admin',
-      text: 'admin'
-    })
-  }
-}
-
-onMounted(() => {
-  refreshNav()
-})
-
-watch(() => userData.value, (newVal) => {
-  if (newVal) {
-    refreshNav()
-  }
-}, { immediate: true })
 
 </script>
 
