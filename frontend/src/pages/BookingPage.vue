@@ -21,6 +21,7 @@
       <WeekSchedule
         :equipmentId="selectedEquipment"
         :schedules
+        :tempTimeSlots="bookingList"
         @add-booking="addBooking"
         :time-range="[0, 24]"
       />

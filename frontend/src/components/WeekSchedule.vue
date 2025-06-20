@@ -69,6 +69,26 @@
           </div>
         </div>
         <div
+          class="time-slot booking"
+          :key="`${time_slot}-${resizeKey}`"
+          v-for="time_slot in tempTimeSlots"
+          :style="{
+            top:
+              timeRefs[textToHour(time_slot.start) * 2 - timeRange[0] * 2]?.offsetTop + 0.8 + 'px',
+            left: dateRefs[dateToIndex(time_slot.date)]?.offsetLeft + 1 + 'px',
+            width: dateRefs[dateToIndex(time_slot.date)]?.offsetWidth - 2.6 + 'px',
+            height:
+              timeRefs[textToHour(time_slot.end) * 2 - timeRange[0] * 2]?.offsetTop -
+              timeRefs[textToHour(time_slot.start) * 2 - timeRange[0] * 2]?.offsetTop -
+              2.6 +
+              'px'
+          }"
+          :title="`${time_slot.date}: ${time_slot.start} - ${time_slot.end}`"
+          @mouseenter="handleSlotMouseUp(hourToText(textToHour(time_slot.start) - 0.5))"
+        >
+          <div class="time-slot-content"></div>
+        </div>
+        <div
           class="time-slot selecting"
           :key="`selecting-${resizeKey}`"
           v-if="selectInfo.start"
@@ -116,6 +136,10 @@ const props = defineProps({
   schedules: {
     type: Object,
     default: () => ({})
+  },
+  tempTimeSlots: {
+    type: Array,
+    default: () => []
   },
   timeRange: {
     type: Array,
@@ -173,8 +197,8 @@ const handleSlotMouseEnter = (date, time, event) => {
   if (!selectInfo.value.isSelecting) return
   if (date !== selectInfo.value.date) return addBooking()
   if (textToHour(time) < textToHour(selectInfo.value.start)) {
-    selectInfo.value.end = selectInfo.value.start
-    selectInfo.value.start = time
+    // selectInfo.value.end = selectInfo.value.start
+    // selectInfo.value.start = time
     return
   }
   selectInfo.value.end = hourToText(textToHour(time) + 0.5)
@@ -184,7 +208,11 @@ const handleSlotMouseUp = (time = null) => {
   if (!selectInfo.value.isSelecting) return
   event.preventDefault()
   if (time) {
+    /*if (textToHour(time) < textToHour(selectInfo.value.start)) {
+      selectInfo.value.end = hourToText(textToHour(selectInfo.value.start) + 0.5)
+    } else {*/
     selectInfo.value.end = hourToText(textToHour(time) + 0.5)
+    //}
   }
   selectInfo.value.isSelecting = false
   return addBooking()
