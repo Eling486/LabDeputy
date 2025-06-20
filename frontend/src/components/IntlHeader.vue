@@ -9,7 +9,7 @@ Eling486
         <RouterLink v-for="router in routers" :key="router" class="nav-item" :to="router.url">{{
           langs[settings.lang].header[router.text]
         }}</RouterLink>
-        <RouterLink v-if="userData.is_admin" class="nav-item" to="/admin">{{
+        <RouterLink v-if="userData['is_admin']" class="nav-item" to="/admin">{{
           langs[settings.lang].header.admin
         }}</RouterLink>
       </div>
@@ -31,7 +31,7 @@ Eling486
 </template>
 
 <script setup>
-import { inject, onMounted, ref, watch } from 'vue'
+import { inject, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Menu } from '@element-plus/icons-vue'
 import { useStore } from '@/stores'

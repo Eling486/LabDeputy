@@ -37,7 +37,7 @@ services:
       - UMASK=022
 ```
 
-默认用户名为admin，密码：Adminadmin
+默认用户名为admin，密码：adminadmin
 
 **部署成功后，请先访问应用（默认端口为`8080`）中的设置页，修改默认用户名及密码**
 

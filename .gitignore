@@ -9,5 +9,6 @@ logs
 *.log
 test/
 keys/
+backend/src/view/
 
 **/.vscode/*

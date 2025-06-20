@@ -27,6 +27,7 @@ const Login = async (username, password) => {
             admin = true
         }
         let payload = {
+            uid: data.data[0].uid,
             username: data.data[0].username,
             is_admin: admin,
             login_time: Date.now(),
