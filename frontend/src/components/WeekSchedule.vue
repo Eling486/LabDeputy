@@ -7,7 +7,7 @@
         <thead>
           <tr>
             <th></th>
-            <th v-for="date in dateItems" :key="date" class="time-grid-date" ref="dateRefs">
+            <th v-for="date in dateItems" :key="date" class="time-grid-date" ref="dateRefs" :class="{today: date.format('YYYY-MM-DD') == todayItem.format('YYYY-MM-DD')}">
               <div class="date-label-wrap">
                 <div class="date-label-weekday">
                   {{ date.format('ddd') }}
@@ -70,8 +70,9 @@
         </div>
         <div
           class="time-slot booking"
+          :class="{ highlight: highlight == index }"
           :key="`${time_slot}-${resizeKey}`"
-          v-for="time_slot in tempTimeSlots"
+          v-for="(time_slot, index) in tempTimeSlots"
           :style="{
             top:
               timeRefs[textToHour(time_slot.start) * 2 - timeRange[0] * 2]?.offsetTop + 0.8 + 'px',
@@ -125,6 +126,7 @@ const langs = inject('langs')
 
 const dateItems = ref([])
 const dates = ref([])
+const todayItem = moment()
 const timeRefs = ref([])
 const dateRefs = ref([])
 
@@ -144,6 +146,10 @@ const props = defineProps({
   timeRange: {
     type: Array,
     default: () => [0, 24]
+  },
+  highlight: {
+    type: Number,
+    default: () => null
   }
 })
 
@@ -227,7 +233,7 @@ onMounted(() => {
     dateItems.value.push(date)
     dates.value.push(date.format('YYYY-MM-DD'))
   }
-  console.log('dateList.value', dateItems.value)
+
   loading.value = false
   window.onresize = () => {
     resizeKey.value++
@@ -248,7 +254,6 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  background-color: $ea-white;
 
   .schedule-content {
     position: relative;
@@ -263,11 +268,17 @@ onMounted(() => {
     box-sizing: border-box;
     font-size: 0.9em;
     table-layout: auto;
+    user-select: none;
+    background-color: $ea-white;
 
     thead {
       th {
         background-color: ea-gray(5);
         height: 30px;
+
+        &.today {
+            background-color: ea-blue(2)
+        }
       }
     }
 
@@ -325,8 +336,8 @@ onMounted(() => {
       justify-content: center;
 
       &.self {
-        background-color: ea-green(5);
-        border-color: ea-green(8);
+        background-color: ea-blue(5);
+        border-color: ea-blue(8);
       }
 
       .time-slot-content {
@@ -341,7 +352,19 @@ onMounted(() => {
       }
 
       &.selecting {
+        background-color: ea-green(5);
+        border-color: ea-green(8);
         pointer-events: none;
+      }
+
+      &.booking {
+        background-color: ea-green(5);
+        border-color: ea-green(8);
+
+        &.highlight {
+          background-color: ea-yellow(5);
+          border-color: ea-yellow(8);
+        }
       }
     }
   }

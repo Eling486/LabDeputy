@@ -23,8 +23,8 @@ CREATE TABLE booking(
     booking_id INTEGER NOT NULL, --预约ID
     uid INTEGER NOT NULL  , --用户ID
     equipment_id INTEGER NOT NULL  , --设备ID
-    start_time TEXT NOT NULL  , --开始时间
-    end_time TEXT NOT NULL  , --结束时间
+    start_time INTEGER NOT NULL  , --开始时间
+    end_time INTEGER NOT NULL  , --结束时间
     status INTEGER NOT NULL DEFAULT 0, --状态，0-正常，-1-已取消
     PRIMARY KEY (booking_id)
 )  ; --预约表;
@@ -94,3 +94,10 @@ CREATE TABLE antibody(
 )  ; --antibody
 
 INSERT INTO USER (username, password, is_admin) VALUES ('admin', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '1');
+
+INSERT INTO equipment (name, type) VALUES ('BSC', 'Tissue Culture');
+
+INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1749787200000, 1749796200000);
+INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1750147200000, 1750154400000);
+INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1750485600000, 1750489200000);
+INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (2, 1, 1750573800000, 1750584600000);

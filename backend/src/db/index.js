@@ -23,78 +23,10 @@ class db {
                 return 0
             }
         }
-        this.rss = {
-            add: async (data) => {
-                if(!data.is_subscribe) data['is_subscribe'] = false
-                let result = await this.search(`SELECT * FROM rss WHERE url = ?;`, [data.url])
-                if (result.code < 0) return -1;
-                if (result.data.length > 0) {
-                    const RID = result.data[0].rid
-                    data.title = data.title || result.data[0].title;
-                    data.name = data.name || result.data[0].name;
-                    data.url = data.url || result.data[0].url;
-                    data.meta = data.meta || result.data[0].meta;
-                    data.source = data.source || result.data[0].source;
-
-                    let err = await this.runSync(`UPDATE rss SET title=?, name=?, url=?, meta=?, source=?, is_subscribe=?, filter=? WHERE rid = ?;`, [data.title, data.name, data.url, data.meta, data.source, Number(data.is_subscribe), data.filter, RID])
-                    if (err) return -1;
-                    return {
-                        rid: RID,
-                        new_rss: false
-                    }
-                }
-                let err = await this.runSync(`INSERT INTO rss (title, name, url, meta, source, is_subscribe, filter) VALUES (?, ?, ?, ?, ?, ?, ?);`, [data.title, data.name, data.url, data.meta, data.source, Number(data.is_subscribe), data.filter])
-                if (err) return -1;
-
-                result = await this.search(`SELECT * FROM rss WHERE url = ?;`, [data.url])
-                if (result.code < 0) return -1;
-                return {
-                    rid: result.data[0].rid,
-                    new_rss: true
-                }
-            },
-            get: async (rid = null) => {
-                if (!rid) {
-                    return await this.search(`SELECT * FROM rss;`)
-                }
-                return await this.search(`SELECT * FROM rss WHERE rid = ?;`, rid)
-            },
-            getByUrl: async (url) => {
-                if(!url) return null
-                return await this.search(`SELECT * FROM rss WHERE url = ?;`, url)
-            },
-            getSubscribed: async () => {
-                return await this.search(`SELECT * FROM rss WHERE is_subscribe = ?;`, 1)
-            },
-            updateAid: async (rid, aid) => {
-                let err = await this.runSync(`UPDATE rss SET aid=? WHERE rid = ?;`, [aid, rid])
-                if (err) return -1;
-                return 0
-            },
-            updateSubscribe: async (rid, isSubscribe) => {
-                let err = await this.runSync(`UPDATE rss SET is_subscribe=? WHERE rid = ?;`, [Number(isSubscribe), rid])
-                if (err) return -1;
-                return 0
-            },
-            delete: async (rid) => {
-                if(!rid) return -1
-                let err = await this.runSync(`DELETE FROM rss WHERE rid = ?;`, rid)
-                if (err) return -1;
-                return 0
-            }
-        }
-        this.anime = {
+        this.booking = {
             add: async (data) => {
                 let result = await this.search(`SELECT * FROM anime WHERE title = ?;`, [data.title])
                 if (result.code < 0) return -1;
-                if (result.data.length > 0) {
-                    let seasonList = JSON.parse(result.data[0].season)
-                    if(seasonList.indexOf(data.season) < 0 && data.season){
-                        seasonList.push(data.season)
-                        await this.runSync(`UPDATE anime SET season = ? WHERE aid = ?;`, [JSON.stringify(seasonList), result.data[0].aid])
-                    }
-                    return result.data[0].aid
-                }
 
                 let err = await this.runSync(`INSERT INTO anime (title, meta_db, meta_id, meta_update_time, meta_title, season, source, filter, poster_url, poster_path, save_path, is_subscribe, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?);`, [data.title, data.meta_db, data.meta_id, data.meta_update_time, data.meta_title, JSON.stringify([data.season]), data.source, data.filter, data.poster_url, data.poster_path, data.save_path, Number(data.is_subscribe), Date.now()])
                 if (err) return -1;
@@ -103,11 +35,17 @@ class db {
                 if (result.code < 0) return -1;
                 return result.data[0].aid
             },
-            get: async (aid = null) => {
-                if (!aid) {
-                    return await this.search(`SELECT * FROM anime`)
+            get: async (equipment_id = null, from = null, to = null, status = null) => {
+                if (!status) {
+                    if (!equipment_id) {
+                        return await this.search(`SELECT * FROM booking WHERE (start_time >= ? AND start_time < ?)`, [from, to])
+                    }
+                    return await this.search(`SELECT * FROM booking WHERE equipment_id = ? AND (start_time >= ? AND start_time < ?)`, [equipment_id, from, to])
                 }
-                return await this.search(`SELECT * FROM anime WHERE aid = ?`, aid)
+                if (!equipment_id) {
+                    return await this.search(`SELECT * FROM booking WHERE (start_time >= ? AND start_time < ?) AND status = ?`, [from, to, status])
+                }
+                return await this.search(`SELECT * FROM booking WHERE equipment_id = ? AND (start_time >= ? AND start_time < ?) AND status = ?`, [equipment_id, from, to, status])
             },
             getByTitle: async (title = null) => {
                 if (!title) {
@@ -121,76 +59,6 @@ class db {
                 return 0;
             }
         }
-        this.torrent = {
-            add: async (data) => {
-                let result = await this.search(`SELECT * FROM torrent WHERE url = ?;`, [data.url])
-                if (result.code < 0) return -1;
-                if (result.data.length > 0) return result.data[0].tid
-
-                let err = await this.runSync(`INSERT INTO torrent (aid, rid, title, homepage, url, content_length, meta, state, add_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`, [data.aid, data.rid, data.title, data.homepage, data.url, data.content_length, data.meta, data.state, Date.now(), Date.now() ])
-                if (err) return -1;
-                return 0;
-            },
-            get: async (tid = null) => {
-                if (!tid) {
-                    return await this.search(`SELECT * FROM torrent`)
-                }
-                return await this.search(`SELECT * FROM torrent WHERE tid = ?`, tid)
-            },
-            getToday: async () => {
-                let dateToday = moment().startOf('day').valueOf()
-                let dateNext = moment().startOf('day').add(1, 'day').valueOf()
-                return await this.search(`SELECT * FROM torrent WHERE add_time > ${dateToday} AND add_time < ${dateNext};`)
-            },
-            getByState: async (state = 0) => {
-                return await this.search(`SELECT * FROM torrent WHERE state = ?`, state)
-            },
-            getByHash: async (hash) => {
-                return await this.search(`SELECT * FROM torrent WHERE hash = ?`, hash)
-            },
-            getByUrl: async (url) => {
-                if(!url) return await this.search(`SELECT * FROM torrent WHERE url = ?`, url);
-                return await this.search(`SELECT * FROM torrent WHERE url = ?`, url)
-            },
-            getByFileName: async (file_name = null) => {
-                if(!file_name) {
-                    return await this.search(`SELECT * FROM torrent WHERE file_name IS NOT NULL`)
-                }
-                return await this.search(`SELECT * FROM torrent WHERE file_name = ?`, file_name)
-            },
-            getByFilenameEmpty: async () => {
-                return await this.search(`SELECT * FROM torrent WHERE file_name IS NULL`)
-            },
-            getByAid: async (aid) => {
-                return await this.search(`SELECT * FROM torrent WHERE aid = ?`, aid)
-            },
-            updateFilename: async (tid, filename) => {
-                let err = await this.runSync(`UPDATE torrent SET file_name = ? WHERE tid = ?`, [filename, tid])
-                if (err) return -1;
-                return 0;
-            },
-            updateSameEp: async (tid, filename) => {
-                let err = await this.runSync(`UPDATE torrent SET file_name = ?, state = ?, update_time = ? WHERE tid = ?`, [filename, -5, Date.now(), tid])
-                if (err) return -1;
-                return 0;
-            },
-            updateState: async (tidList = [], state) => {
-                let err = await this.runSync(`UPDATE torrent SET state = ?, update_time = ? WHERE tid IN (${tidList.join(',')})`, [state, Date.now()])
-                if (err) return -1;
-                return 0;
-            },
-            updateHash: async (tid = null, hash) => {
-                let err = await this.runSync(`UPDATE torrent SET hash = ? WHERE tid = ?`, [hash, tid])
-                if (err) return -1;
-                return 0;
-            },
-            downloadUpdate: async (tid, hash, state) => {
-                let err = await this.runSync(`UPDATE torrent SET hash = ?, state=?, update_time = ? WHERE tid = ?`, [hash, state, Date.now(), tid])
-                if (err) return -1;
-                return 0;
-            }
-        }
-        return this
     }
 
     async reset() {

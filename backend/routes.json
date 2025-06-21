@@ -25,6 +25,13 @@
             "equipment": {
                 "list": {
                     "active": true
+                },
+                "booking": {
+                    "get": {
+                        "week": {
+                            "active": true
+                        }
+                    }
                 }
             },
             "config": {
