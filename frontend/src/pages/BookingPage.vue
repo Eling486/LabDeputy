@@ -3,7 +3,11 @@
     <BoxLoading :loading="loading" />
     <div class="operation-panel">
       <div class="panel-title">Equipment</div>
-      <el-select v-model="selectedEquipment" placeholder="Select an Equipment" style="width: 400px">
+      <el-select
+        v-model="selectedEquipmentId"
+        placeholder="Select an Equipment"
+        style="width: 400px"
+      >
         <el-option
           v-for="equipment in equipments"
           :key="equipment.equipment_id"
@@ -12,44 +16,56 @@
           :disabled="equipment.status < 1"
         />
       </el-select>
-      <div class="booking-list-title panel-title">Book the following times</div>
-      <div class="booking-list">
-        <template v-for="dateItem in dateItems" :key="`${dateItem}-${bookingList}`">
+      <div class="booking-list-title panel-title">
+        {{
+          bookingList.length > 0
+            ? 'Book the following time periods:'
+            : 'Please click and drag in the time table'
+        }}
+      </div>
+      <el-scrollbar class="booking-list">
+        <template v-for="(booking, index) in bookingList" :key="booking">
           <div
             class="booking-date-wrap"
-            v-if="
-              bookingList.filter((item) => item.date == dateItem.format('YYYY-MM-DD')).length > 0
-            "
+            v-if="index == 0 || booking.date !== bookingList[index - 1].date"
           >
-            <span class="booking-weekday">{{ dateItem.format('ddd') }}</span
-            ><span class="booking-date">{{ dateItem.format('YYYY-MM-DD') }}</span>
+            <span class="booking-weekday">{{ moment(booking.date).format('ddd') }}</span
+            ><span class="booking-date">{{ moment(booking.date).format('YYYY-MM-DD') }}</span>
           </div>
-          <template v-for="(booking, index) in bookingList" :key="booking">
-            <div class="booking-item" v-if="booking.date == dateItem.format('YYYY-MM-DD')" @mousemove="handleBookingMouseMove(index)" @mouseout="handleBookingMouseOut">
-              <div class="time-wrap">
-                <span class="time-start">{{ booking.start }}</span>
-                <span class="time-to">−</span>
-                <span class="time-end">{{ booking.end }}</span>
-              </div>
-              <div class="del-btn" @click="removeBooking(index)">
-                <el-icon :size="16"><Close /></el-icon>
-              </div>
+          <div
+            class="booking-item"
+            @mousemove="handleBookingMouseMove(index)"
+            @mouseout="handleBookingMouseOut"
+          >
+            <div class="time-wrap">
+              <span class="time-start">{{ booking.start }}</span>
+              <span class="time-to">−</span>
+              <span class="time-end">{{ booking.end }}</span>
+              <span class="time-period">{{ moment(`${booking.date} ${booking.end}`).diff(`${booking.date} ${booking.start}`, 'hours', true)}} hr</span>
             </div>
-          </template>
+            <div class="del-btn" @click="removeBooking(index)">
+              <el-icon :size="16"><Close /></el-icon>
+            </div>
+          </div>
         </template>
-      </div>
+      </el-scrollbar>
       <div class="btn-wrap" v-if="bookingList.length > 0">
-        <el-button type="primary" @click="submitBooking()">Book</el-button>
+        <el-button type="primary" @click="submitBooking()" :loading="submitting">Book</el-button>
       </div>
     </div>
     <div class="schedule-panel">
       <WeekSchedule
-        :equipmentId="selectedEquipment"
+        :equipmentId="selectedEquipmentId"
         :schedules
+        :dateItems="dateItems"
+        :dates="dates"
         :tempTimeSlots="bookingList"
         @add-booking="addBooking"
         :time-range="[0, 24]"
         :highlight="highlightBooking"
+        :loading="scheduleLoading"
+        @prevWeek="prevWeek"
+        @nextWeek="nextWeek"
       />
     </div>
   </main>
@@ -60,6 +76,7 @@ import moment from 'moment'
 import BoxLoading from '@/components/BoxLoading.vue'
 import WeekSchedule from '@/components/WeekSchedule.vue'
 import { ref, reactive, onMounted, inject } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
 import { api } from '@/utils'
 import { useStore } from '@/stores'
@@ -70,79 +87,14 @@ const { settings } = storeToRefs(store)
 const langs = inject('langs')
 
 const loading = ref(true)
+const scheduleLoading = ref(true)
+const submitting = ref(false)
 
-const selectedEquipment = ref(null)
+const selectedEquipmentId = ref(null)
 
 const equipments = ref([])
 
-const schedules = ref({
-  monday: '2025-06-16',
-  time_slots: [
-    {
-      date: '2025-06-16',
-      start: '09:00',
-      end: '10:00',
-      user: {
-        uid: 1,
-        realname: 'XXX1'
-      }
-    },
-    {
-      date: '2025-06-16',
-      start: '10:00',
-      end: '11:00',
-      user: {
-        uid: 2,
-        realname: 'XXX2'
-      }
-    },
-    {
-      date: '2025-06-17',
-      start: '14:00',
-      end: '16:00',
-      user: {
-        uid: 1,
-        realname: 'XXX1'
-      }
-    },
-    {
-      date: '2025-06-17',
-      start: '10:00',
-      end: '11:00',
-      user: {
-        uid: 2,
-        realname: 'XXX2'
-      }
-    },
-    {
-      date: '2025-06-17',
-      start: '17:00',
-      end: '17:30',
-      user: {
-        uid: 1,
-        realname: 'XXX1'
-      }
-    },
-    {
-      date: '2025-06-18',
-      start: '14:00',
-      end: '16:00',
-      user: {
-        uid: 3,
-        realname: 'XXX3'
-      }
-    },
-    {
-      date: '2025-06-18',
-      start: '10:00',
-      end: '11:00',
-      user: {
-        uid: 2,
-        realname: 'XXX2'
-      }
-    }
-  ]
-})
+const schedules = ref({})
 
 const bookingList = ref([])
 const highlightBooking = ref(null)
@@ -165,10 +117,7 @@ const addBooking = (booking) => {
 
 const removeBooking = (index) => {
   bookingList.value.splice(index, 1)
-}
-
-const submitBooking = () => {
-  console.log(bookingList.value)
+  highlightBooking.value = null
 }
 
 const handleBookingMouseMove = (index) => {
@@ -179,7 +128,79 @@ const handleBookingMouseOut = () => {
   highlightBooking.value = null
 }
 
+const loadSchedule = async (date) => {
+  scheduleLoading.value = true
+  let result = await api(
+    'GET',
+    `/api/equipment/booking/get/week?equipment_id=${selectedEquipmentId.value}&date=${date}`
+  ).catch((err) => {
+    return console.log(err)
+  })
+  if (result.code !== 0) return console.error('Error:', result.msg)
+  schedules.value = result.data
+
+  dateItems.value = []
+  dates.value = []
+  let mondayDate = moment(schedules.value.monday)
+  for (let i = 0; i < 7; i++) {
+    let date = mondayDate.clone().add(i, 'd')
+    dateItems.value.push(date)
+    dates.value.push(date.format('YYYY-MM-DD'))
+  }
+  scheduleLoading.value = false
+}
+
+const submitBooking = async () => {
+  submitting.value = true
+  let result = await api('POST', `/api/equipment/booking/submit`, {
+    equipment_id: selectedEquipmentId.value,
+    booking_list: bookingList.value
+  }).catch((err) => {
+    submitting.value = false
+    if (err.code === -505) {
+      let content = ''
+      for (let i = 0; i < err.data.length; i++) {
+        content += `${err.data[i].date}: ${err.data[i].start} − ${err.data[i].end}<br />`
+      }
+      bookingList.value = err.data
+      ElMessageBox.alert(content, 'Time Clash', {
+        confirmButtonText: 'OK',
+        dangerouslyUseHTMLString: true,
+      })
+    } else {
+      bookingList.value = []
+      ElMessage.error('Booking failed')
+    }
+    loadSchedule(schedules.value.monday)
+    return console.log(err)
+  })
+
+  if (result.code !== 0) return console.error('Error:', result.msg)
+
+  bookingList.value = []
+  submitting.value = false
+  if (result.code == 0) {
+    ElMessage({
+      message: 'Successfully booked',
+      type: 'success'
+    })
+  }
+  loadSchedule(schedules.value.monday)
+}
+
+const prevWeek = () => {
+  let date = moment(schedules.value.monday).subtract(1, 'w').format('YYYY-MM-DD')
+  loadSchedule(date)
+}
+
+const nextWeek = () => {
+  let date = moment(schedules.value.monday).add(1, 'w').format('YYYY-MM-DD')
+  console.log(date)
+  loadSchedule(date)
+}
+
 const dateItems = ref([])
+const dates = ref([])
 
 onMounted(async () => {
   let result = await api('GET', '/api/equipment/list').catch((err) => {
@@ -199,14 +220,9 @@ onMounted(async () => {
       status: 0
     }
   )
-  selectedEquipment.value = equipments.value[0].equipment_id
+  selectedEquipmentId.value = equipments.value[0].equipment_id
 
-  let mondayDate = moment(schedules.value.monday)
-  for (let i = 0; i < 7; i++) {
-    let date = mondayDate.clone().add(i, 'd')
-    dateItems.value.push(date)
-    // dates.value.push(date.format('YYYY-MM-DD'))
-  }
+  await loadSchedule(moment().format('YYYY-MM-DD'))
 
   loading.value = false
 })
@@ -263,6 +279,7 @@ onMounted(async () => {
         border: 1px $light-gray solid;
         background-color: $ea-white;
         box-sizing: border-box;
+        transition: background-color 0.2s;
 
         &:hover {
           background-color: ea-gray(1);
@@ -274,6 +291,12 @@ onMounted(async () => {
 
         .time-end {
           margin-left: 5px;
+        }
+
+        .time-period {
+          color: ea-gray(40);
+          margin-left: 15px;
+          font-size: 12px;
         }
 
         .del-btn {

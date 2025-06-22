@@ -1,6 +1,9 @@
 const booking = {
-    getBookingByPeriod: async (equipment_id = null, from, to, status = 0) => {
+    getBookingByPeriod: async (from, to, equipment_id = null, status = 0) => {
         return await global.db.booking.get(equipment_id, from, to, status)
+    },
+    addBooking: async (data) => {
+        return await global.db.booking.add(data)
     }
 }
 

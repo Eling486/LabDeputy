@@ -93,7 +93,8 @@ CREATE TABLE antibody(
     PRIMARY KEY (antibody_id)
 )  ; --antibody
 
-INSERT INTO USER (username, password, is_admin) VALUES ('admin', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '1');
+INSERT INTO USER (username, realname, password, is_admin) VALUES ('admin', 'Admin', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '1');
+INSERT INTO USER (username, password, is_admin) VALUES ('test', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '0');
 
 INSERT INTO equipment (name, type) VALUES ('BSC', 'Tissue Culture');
 
@@ -101,3 +102,5 @@ INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1749
 INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1750147200000, 1750154400000);
 INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1750485600000, 1750489200000);
 INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (2, 1, 1750573800000, 1750584600000);
+INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 2, 1750485600000, 1750489200000);
+INSERT INTO booking (uid, equipment_id, start_time, end_time, status) VALUES (1, 1, 1750147200000, 1750154400000, -1);

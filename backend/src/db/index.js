@@ -25,38 +25,26 @@ class db {
         }
         this.booking = {
             add: async (data) => {
-                let result = await this.search(`SELECT * FROM anime WHERE title = ?;`, [data.title])
+                let result = await this.search(`SELECT * FROM booking WHERE equipment_id = ? AND (? < end_time AND ? > start_time) AND status = ?;`, [data.equipment_id, data.start, data.end, 0])
                 if (result.code < 0) return -1;
 
-                let err = await this.runSync(`INSERT INTO anime (title, meta_db, meta_id, meta_update_time, meta_title, season, source, filter, poster_url, poster_path, save_path, is_subscribe, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?);`, [data.title, data.meta_db, data.meta_id, data.meta_update_time, data.meta_title, JSON.stringify([data.season]), data.source, data.filter, data.poster_url, data.poster_path, data.save_path, Number(data.is_subscribe), Date.now()])
+                if (result.data.length > 0) return -2;
+
+                let err = await this.runSync(`INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (?, ?, ?, ?);`, [data.uid, data.equipment_id, data.start, data.end])
                 if (err) return -1;
-
-                result = await this.search(`SELECT * FROM anime WHERE title = ?;`, [data.title])
-                if (result.code < 0) return -1;
-                return result.data[0].aid
+                return 0
             },
             get: async (equipment_id = null, from = null, to = null, status = null) => {
-                if (!status) {
-                    if (!equipment_id) {
-                        return await this.search(`SELECT * FROM booking WHERE (start_time >= ? AND start_time < ?)`, [from, to])
+                if (status === null) {
+                    if (equipment_id === null) {
+                        return await this.search(`SELECT booking_id, start_time, end_time, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE (booking.start_time >= ? AND booking.start_time < ?)`, [from, to])
                     }
-                    return await this.search(`SELECT * FROM booking WHERE equipment_id = ? AND (start_time >= ? AND start_time < ?)`, [equipment_id, from, to])
+                    return await this.search(`SELECT booking_id, start_time, end_time, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE (booking.equipment_id = ? AND (booking.start_time >= ? AND booking.start_time < ?))`, [equipment_id, from, to])
                 }
-                if (!equipment_id) {
-                    return await this.search(`SELECT * FROM booking WHERE (start_time >= ? AND start_time < ?) AND status = ?`, [from, to, status])
+                if (equipment_id === null) {
+                    return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE ((booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [from, to, status])
                 }
-                return await this.search(`SELECT * FROM booking WHERE equipment_id = ? AND (start_time >= ? AND start_time < ?) AND status = ?`, [equipment_id, from, to, status])
-            },
-            getByTitle: async (title = null) => {
-                if (!title) {
-                    return await this.search(`SELECT * FROM anime`)
-                }
-                return await this.search(`SELECT * FROM anime WHERE title = ?`, title)
-            },
-            updatePoster: async (aid, imgUrl, imgPath) => {
-                let err = await this.runSync(`UPDATE anime SET poster_url = ?, poster_path = ? WHERE aid = ?`, [imgUrl, imgPath, aid])
-                if (err) return -1;
-                return 0;
+                return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE (booking.equipment_id = ? AND (booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [equipment_id, from, to, status])
             }
         }
     }

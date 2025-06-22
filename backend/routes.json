@@ -31,6 +31,9 @@
                         "week": {
                             "active": true
                         }
+                    },
+                    "submit": {
+                        "active": true
                     }
                 }
             },
