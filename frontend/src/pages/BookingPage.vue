@@ -139,6 +139,8 @@ const loadSchedule = async (date) => {
   if (result.code !== 0) return console.error('Error:', result.msg)
   schedules.value = result.data
 
+  console.log(schedules.value)
+
   dateItems.value = []
   dates.value = []
   let mondayDate = moment(schedules.value.monday)

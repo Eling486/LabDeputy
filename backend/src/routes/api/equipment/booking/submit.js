@@ -19,10 +19,18 @@ router.post('/', async function (req, res, next) {
 
     for (let i = 0; i < req.body.booking_list.length; i++) {
         let bookingItem = req.body.booking_list[i]
+        let start = moment(`${bookingItem.date} ${bookingItem.start}`).valueOf()
+        let end = moment(`${bookingItem.date} ${bookingItem.end}`).valueOf()
+        
+        if (typeof start !== 'number' || typeof end !== 'number' || end <= start) {
+            failList.push(bookingItem)
+            continue
+        }
+
         let result = await booking.addBooking({
             equipment_id: req.body.equipment_id,
-            start: moment(`${bookingItem.date} ${bookingItem.start}`).valueOf(),
-            end: moment(`${bookingItem.date} ${bookingItem.end}`).valueOf(),
+            start: start,
+            end: end,
             uid: loginState.payload.uid
         })
         if (result < 0) failList.push(bookingItem)

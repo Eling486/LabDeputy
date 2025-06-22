@@ -1,6 +1,6 @@
 {
-  "name": "easy-anime",
-  "version": "0.2.4",
+  "name": "lab-deputy",
+  "version": "0.0.1",
   "description": "",
   "main": "./backend/src/app.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
-  "name": "apine",
-  "version": "1.0.0",
+  "name": "lab-deputy-backend",
+  "version": "0.0.1",
   "description": "",
   "main": "./src/app.js",
   "scripts": {
