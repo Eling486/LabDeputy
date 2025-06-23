@@ -6,8 +6,15 @@ CREATE TABLE user(
     password TEXT  , --密码
     invitation TEXT  , --邀请码
     is_admin INTEGER NOT NULL  DEFAULT 0, --是否为管理员
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (uid)
 )  ; --用户表;
+
+CREATE TRIGGER IF NOT EXISTS trigger_user_timestamp AFTER UPDATE ON user
+BEGIN
+    UPDATE user SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
+
 
 DROP TABLE IF EXISTS equipment;
 CREATE TABLE equipment(
@@ -15,8 +22,14 @@ CREATE TABLE equipment(
     name TEXT NOT NULL  , --设备名称
     type TEXT NOT NULL  , --设备类型
     status INTEGER NOT NULL DEFAULT 1, --状态，0-维修中，1-可用
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (equipment_id)
 )  ; --设备表
+
+CREATE TRIGGER IF NOT EXISTS trigger_equipment_timestamp AFTER UPDATE ON equipment
+BEGIN
+    UPDATE equipment SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 DROP TABLE IF EXISTS booking;
 CREATE TABLE booking(
@@ -26,8 +39,14 @@ CREATE TABLE booking(
     start_time INTEGER NOT NULL  , --开始时间
     end_time INTEGER NOT NULL  , --结束时间
     status INTEGER NOT NULL DEFAULT 0, --状态，0-正常，-1-已取消
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (booking_id)
 )  ; --预约表;
+
+CREATE TRIGGER IF NOT EXISTS trigger_booking_timestamp AFTER UPDATE ON booking
+BEGIN
+    UPDATE booking SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 DROP TABLE IF EXISTS tank;
 CREATE TABLE tank(
@@ -40,8 +59,14 @@ CREATE TABLE tank(
     box_arrange TEXT(255)   , --冻存盒排列
     brand TEXT(255)   , --品牌
     details TEXT(255)   , --详情
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (tank_id)
 )  ; --tank
+
+CREATE TRIGGER IF NOT EXISTS trigger_tank_timestamp AFTER UPDATE ON tank
+BEGIN
+    UPDATE tank SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 DROP TABLE IF EXISTS cell;
 CREATE TABLE cell(
@@ -58,8 +83,14 @@ CREATE TABLE cell(
     thaw_date TEXT(255)   , --复苏日期
     owner TEXT(255)   , --所有人
     remark TEXT(255)   , --备注
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (cell_id)
 )  ; --cell
+
+CREATE TRIGGER IF NOT EXISTS trigger_cell_timestamp AFTER UPDATE ON cell
+BEGIN
+    UPDATE cell SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 DROP TABLE IF EXISTS box;
 CREATE TABLE box(
@@ -68,8 +99,14 @@ CREATE TABLE box(
     storage_conditions TEXT NOT NULL  , --冻存盒储存条件
     name TEXT(255) NOT NULL  , --冻存盒名称
     label TEXT(255)   , --冻存盒标签
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (box_id)
 )  ; --box
+
+CREATE TRIGGER IF NOT EXISTS trigger_box_timestamp AFTER UPDATE ON box
+BEGIN
+    UPDATE box SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 DROP TABLE IF EXISTS antibody;
 CREATE TABLE antibody(
@@ -90,8 +127,14 @@ CREATE TABLE antibody(
     storage_conditions TEXT NOT NULL  , --储存条件
     box_id INTEGER NOT NULL  , --冻存盒ID
     position TEXT NOT NULL  , --冻存盒位置
+    timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (antibody_id)
 )  ; --antibody
+
+CREATE TRIGGER IF NOT EXISTS trigger_antibody_timestamp AFTER UPDATE ON antibody
+BEGIN
+    UPDATE antibody SET timestamp = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid;
+END;
 
 INSERT INTO USER (username, realname, password, is_admin) VALUES ('admin', 'Admin', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '1');
 INSERT INTO USER (username, password, is_admin) VALUES ('test', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '0');
