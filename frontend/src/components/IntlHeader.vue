@@ -21,6 +21,9 @@ Eling486
       <div class="user-wrap" v-if="userData">
         <div class="username">{{ userData.username }}</div>
         <div class="user-menu">
+          <RouterLink class="setting user-menu-item"  to="/setting">
+            {{ langs[settings.lang].header.setting }}
+          </RouterLink>
           <div class="logout user-menu-item" @click="onLogout">
             {{ langs[settings.lang].header.logout }}
           </div>
@@ -103,6 +106,7 @@ header {
   box-shadow: $shadow-1;
   font-size: 0.9em;
   background-color: $ea-white;
+  color: $ea-text;
   user-select: none;
 
   .nav-btn {
@@ -171,6 +175,8 @@ header {
         transition: all 0.2s;
 
         .user-menu-item {
+          color: $ea-text;
+          display: block;
           padding: 8px 16px;
           cursor: pointer;
 

@@ -1,31 +1,26 @@
 <template>
   <main class="page-home">
+    <BoxLoading :loading="loading" />
     <div class="panel-left">
-      <BoxLoading :loading="loading" />
-      <div class="panel panel-info">
-        <div class="info-item">
-          <div class="title">{{ langs[settings.lang].home.info_anime_title }}</div>
-          <div class="content content-number">{{ info.animeList.length }}</div>
-        </div>
-        <div class="info-item">
-          <div class="title">{{ langs[settings.lang].home.info_subscribed_title }}</div>
-          <div class="content content-number">{{ info.subscribedRSS.length }}</div>
-        </div>
-        <div class="info-item">
-          <div class="title">{{ langs[settings.lang].home.info_new_today }}</div>
-          <div class="content content-number">{{ info.new.today.length }}</div>
-        </div>
+      <div class="panel-content">
+        <RouterLink class="function-item" to="/booking">
+          <el-icon :size="60" class="function-icon"><Calendar /></el-icon>
+          <div class="function-title">Booking</div>
+        </RouterLink>
       </div>
     </div>
-    <div class="panel-right panel-output" ref="panelOutput">
-      <p class="line" v-for="line in output" :key="line[0]" v-html="line[1]"></p>
+    <div class="panel-right panel-news" ref="panelNews">
+      <div class="panel-header">Recents</div>
+      <div class="panel-content"></div>
     </div>
   </main>
 </template>
 
 <script setup>
 import { onMounted, ref, reactive, inject } from 'vue'
+import { RouterLink } from 'vue-router'
 import { api } from '@/utils'
+import { Calendar } from '@element-plus/icons-vue'
 import { useStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
@@ -43,8 +38,6 @@ const info = reactive({
 })
 
 const loading = ref(true)
-
-const panelOutput = ref()
 
 /*
 const loadInfo = async () => {
@@ -83,48 +76,40 @@ onMounted(async () => {
     flex-grow: 1;
     margin-right: 20px;
 
-    .panel-info {
+    .function-item {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-content: flex-start;
-      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 150px;
+      height: 150px;
       background-color: $ea-white;
       box-shadow: $shadow-1;
+      cursor: pointer;
+      color: $ea-text;
+      transition: all 0.2s;
 
-      .info-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 0 10px 10px 10px;
-        width: 120px;
-        height: 120px;
+      .function-title {
+        margin-top: 10px;
+      }
 
-        .title {
-          color: ea-gray(70);
-          margin-bottom: 5px;
-        }
-
-        .content-number {
-          color: $ea-main;
-          font-size: 2.5em;
-        }
+      &:hover {
+        color: $ea-text-light;
       }
     }
   }
 
-  .panel-output {
-    overflow-y: auto;
-    overflow-x: scroll;
+  .panel-news {
+    display: flex;
+    flex-direction: column;
     background-color: $ea-white;
     box-shadow: $shadow-1;
     padding: 5px 10px;
-    font-size: 12px;
-    line-height: 12px;
-    font-family: Consolas, Monaco, monospace;
     box-sizing: border-box;
-    color: ea-gray(50);
+
+    .panel-header {
+      padding: 10px 20px;
+    }
 
     p {
       display: block;
@@ -155,13 +140,13 @@ onMounted(async () => {
           }
 
           .content-number {
-          font-size: 2em;
-        }
+            font-size: 2em;
+          }
         }
       }
     }
 
-    .panel-output {
+    .panel-news {
       flex-grow: 1;
       font-size: 8px;
       line-height: 8px;

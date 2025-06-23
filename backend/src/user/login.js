@@ -15,7 +15,7 @@ const Login = async (username, password) => {
     }
 
     let pwdSHA256 = createHash('sha256').update(`LabDeputy${username}${password}`).digest('base64');
-    console.log(`Login: username=${username}, password=${password}, pwdSHA256=${pwdSHA256}`);
+
     if (pwdSHA256 !== data.data[0].password) return {
         code: -50104,
         msg: 'Incorrect password'
@@ -29,6 +29,7 @@ const Login = async (username, password) => {
         let payload = {
             uid: data.data[0].uid,
             username: data.data[0].username,
+            realname: data.data[0].realname,
             is_admin: admin,
             login_time: Date.now(),
         }

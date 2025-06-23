@@ -139,8 +139,6 @@ const loadSchedule = async (date) => {
   if (result.code !== 0) return console.error('Error:', result.msg)
   schedules.value = result.data
 
-  console.log(schedules.value)
-
   dateItems.value = []
   dates.value = []
   let mondayDate = moment(schedules.value.monday)
@@ -197,7 +195,6 @@ const prevWeek = () => {
 
 const nextWeek = () => {
   let date = moment(schedules.value.monday).add(1, 'w').format('YYYY-MM-DD')
-  console.log(date)
   loadSchedule(date)
 }
 
@@ -208,25 +205,10 @@ onMounted(async () => {
   let result = await api('GET', '/api/equipment/list').catch((err) => {
     return console.log(err)
   })
-  equipments.value.push(
-    {
-      equipment_id: 1,
-      name: 'BSC',
-      type: 'Tissue Culture',
-      status: 1
-    },
-    {
-      equipment_id: 2,
-      name: 'PCR',
-      type: 'Molecular Biology',
-      status: 0
-    }
-  )
+  equipments.value = result.data
   selectedEquipmentId.value = equipments.value[0].equipment_id
-
-  await loadSchedule(moment().format('YYYY-MM-DD'))
-
   loading.value = false
+  await loadSchedule(moment().format('YYYY-MM-DD'))
 })
 </script>
 
@@ -243,7 +225,9 @@ onMounted(async () => {
     flex-direction: column;
     align-items: flex-start;
     height: 80vh;
-    padding: 50px 100px;
+    padding: 0 100px;
+    box-sizing: border-box;
+    user-select: none;
 
     .booking-list {
       flex-grow: 1;

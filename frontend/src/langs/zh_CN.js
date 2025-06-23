@@ -17,6 +17,7 @@ const lang = {
         booking: '预约',
         storage: '库存',
         admin: '管理',
+        setting: '设置',
         logout: '登出'
     },
     home: {
@@ -33,6 +34,25 @@ const lang = {
         password: '密码',
         msg_need_username: '请输入用户名',
         msg_need_password: '请输入密码',
+    },
+    setting: {
+        uid: '用户ID',
+        username: '用户名',
+        realname: '真实姓名',
+        password_old: '原密码',
+        password: '新密码',
+        password_repeat: '确认密码',
+        reset: '重置',
+        save: '保存',
+        alert_change_password: '修改密码',
+        alert_change_realname: '修改真实姓名',
+        msg_error_empty_realname: '请输入真实姓名',
+        msg_error_empty_old_password: '请输入原密码',
+        msg_err_old_password: '原密码错误',
+        msg_error_password_repeat: '两次输入的新密码不一致',
+        msg_error_password_illegal: '密码需至少6位，包含字母及数字',
+        msg_save_success: '设置保存成功',
+        msg_save_success_reload: '设置保存成功，将在5秒后登出',
     }
 }
 

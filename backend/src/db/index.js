@@ -13,9 +13,17 @@ class db {
             getByUid: async (uid) => {
                 return await this.search(`SELECT * FROM user WHERE uid = ?`, [uid])
             },
-            updateByUid: async (uid, username, password) => {
-                console.log(uid, username, password)
-                let err = await this.runSync(`UPDATE user SET username=?, password=? WHERE uid = ?;`, [username, password, uid])
+            updatePasswordByUid: async (uid, password) => {
+                let err = await this.runSync(`UPDATE user SET password=? WHERE uid = ?;`, [ password, uid])
+                if (err) {
+                    global.logger.error(err)
+                    return -1
+                };
+                return 0
+            },
+            updateRealnameByUid: async (uid, realname) => {
+                console.log(uid, realname)
+                let err = await this.runSync(`UPDATE user SET realname=? WHERE uid = ?;`, [realname, uid])
                 if (err) {
                     global.logger.error(err)
                     return -1
@@ -45,6 +53,15 @@ class db {
                     return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE ((booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [from, to, status])
                 }
                 return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE (booking.equipment_id = ? AND (booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [equipment_id, from, to, status])
+            }
+        }
+
+        this.equipment = {
+            get: async (status = null) => {
+                if (status === null) {
+                    return await this.search(`SELECT * FROM equipment;`)
+                }
+                return await this.search(`SELECT * FROM equipment WHERE status = ?;`, [status])
             }
         }
     }

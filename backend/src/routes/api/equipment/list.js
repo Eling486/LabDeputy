@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { sendJSON } = require('../../../response')
 const { validate } = require('../../../user')
+const { equipment } = require('../../../utils')
 
 router.get('/', async function (req, res, next) {
     let loginState = await validate(req)
@@ -13,9 +14,20 @@ router.get('/', async function (req, res, next) {
         return next();
     }
 
+    let result = await equipment.getAvailableEquipment()
+
+    if (result.code !== 0) {
+        sendJSON({
+            req, res,
+            code: -500
+        });
+        return next();
+    }
+
     sendJSON({
         req, res,
-        code: 0
+        code: 0,
+        data: result.data
     });
     return next();
 })

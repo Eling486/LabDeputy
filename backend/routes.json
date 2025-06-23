@@ -15,6 +15,9 @@
                 "validate": {
                     "active": true
                 },
+                "refresh": {
+                    "active": true
+                },
                 "update": {
                     "active": true
                 }

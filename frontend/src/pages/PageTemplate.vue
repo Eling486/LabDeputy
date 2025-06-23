@@ -33,7 +33,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.page-rss {
+.page {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,7 +41,7 @@ onMounted(async () => {
   background-color: ea-dark(1);
 }
 
-.rss-box {
+.page-box {
     position: relative;
   height: 80vh;
   width: 80vw;
@@ -51,12 +51,12 @@ onMounted(async () => {
   padding-top: $ea-nav-height;
   overflow: hidden;
 }
-.nav-rss {
+.nav {
   position: absolute;
   top: 0;
   z-index: 9999;
   width: 100%;
   height: $ea-nav-height;
-  border-bottom: $st-light-gray 1px solid;
+  border-bottom: $light-gray 1px solid;
 }
 </style>

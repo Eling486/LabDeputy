@@ -41,6 +41,16 @@ const api = async (methods, url, data = null) => {
     })
 }
 
+const updateUserData = async (token) => {
+    const store = useStore()
+    store.updateToken(token)
+    let userData = await api('POST', '/api/user/validate').catch((err) => {
+        return err
+    })
+    store.updateUserData(userData.data.payload)
+    return
+}
+
 const login = async (username, password) => {
     let result = await api('POST', '/api/user/login', {
         username: username,
@@ -51,12 +61,20 @@ const login = async (username, password) => {
     if (result.code < 0) {
         return result
     }
-    const store = useStore()
-    store.updateToken(result.data)
-    let userData = await api('POST', '/api/user/validate').catch((err) => {
+    let err = await updateUserData(result.data)
+    if (err) return err
+    return result
+}
+
+const refresh = async () => {
+    let result = await api('POST', '/api/user/refresh').catch((err) => {
         return err
     })
-    store.updateUserData(userData.data.payload)
+    if (result.code < 0) {
+        return result
+    }
+    let err = await updateUserData(result.data)
+    if (err) return err
     return result
 }
 
@@ -80,5 +98,6 @@ export {
     api,
     login,
     logout,
+    refresh,
     loginState
 }

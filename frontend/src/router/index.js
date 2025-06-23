@@ -16,6 +16,11 @@ const router = createRouter({
       component: LoginPage
     },
     {
+      path: '/setting',
+      name: 'setting',
+      component: () => import('../pages/SettingPage.vue')
+    },
+    {
       path: '/booking',
       name: 'booking',
       component: () => import('../pages/BookingPage.vue')

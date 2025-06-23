@@ -1,19 +1,14 @@
 const { jwt } = require('../utils');
 const { createHash } = require('crypto');
 
-const Update = async (username, password, admin = false) => {
+const Update = async (uid, username, password) => {
     let pwdSHA256 = createHash('sha256').update(`LabDeputy${username}${password}`).digest('base64');
-    if (admin) {
-        let resUpdate = await global.db.user.updateByUid(1, username, pwdSHA256)
-        if (resUpdate < 0) {
-            return {
-                code: -500,
-                msg: 'Server Error'
-            }
-        }
+    
+    let resUpdate = await global.db.user.updatePasswordByUid(uid, pwdSHA256)
+    if (resUpdate < 0) {
         return {
-            code: 0,
-            msg: 'ok',
+            code: -500,
+            msg: 'Server Error'
         }
     }
     return {

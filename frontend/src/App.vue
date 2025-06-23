@@ -83,6 +83,7 @@ loginRedirect()
 
   .nav-right {
     margin-left: auto;
+    display: flex;
   }
 
   .nav-item {

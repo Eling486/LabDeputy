@@ -338,7 +338,6 @@ onMounted(() => {
   updateNowTime()
   timer = setInterval(() => {
     updateNowTime()
-    console.log(now.value, (now.value * 2) % 1)
   }, 1000 * 60)
 })
 

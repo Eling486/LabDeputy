@@ -7,13 +7,13 @@ const { booking } = require('../../../../../utils')
 
 router.get('/', async function (req, res, next) {
     let loginState = await validate(req)
-    /*if (!loginState.logined) {
+    if (!loginState.logined) {
         sendJSON({
             req, res,
             code: -50101
         });
         return next();
-    }*/
+    }
 
     if (!req.query.date) {
         req.query.date = moment().format('YYYY-MM-DD')

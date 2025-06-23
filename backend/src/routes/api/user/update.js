@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { sendJSON } = require('../../../response')
-const { update, validate } = require('../../../user')
+const { update, validate, login, rename } = require('../../../user')
 
 router.post('/', async function (req, res, next) {
   let loginState = await validate(req)
@@ -13,7 +13,7 @@ router.post('/', async function (req, res, next) {
     return next();
   }
 
-  if (!loginState.payload.is_admin && req.body.admin) {
+  if (!loginState.payload.is_admin && loginState.payload.uid !== req.body.uid) {
     sendJSON({
       req, res,
       code: -50102
@@ -21,23 +21,39 @@ router.post('/', async function (req, res, next) {
     return next();
   }
 
-  if (!loginState.payload.is_admin && loginState.payload.username !== req.body.username) {
-    sendJSON({
-      req, res,
-      code: -50102
-    });
-    return next();
+  if (req.body.password) {
+    let login_result = await login(req.body.username, req.body.password.old)
+
+    if (login_result.code < 0) {
+      sendJSON({
+        req, res,
+        code: login_result.code,
+      });
+      return next();
+    }
+
+    let result = await update(req.body.uid, req.body.username, req.body.password.new)
+
+    if (result.code < 0) {
+      sendJSON({
+        req, res,
+        code: result.code,
+      });
+      return next();
+    }
   }
 
-  let result = await update(req.body.username, req.body.password, req.body.admin)
-  
-  if (result.code < 0) {
-    sendJSON({
-      req, res,
-      code: result.code,
-    });
-    return next();
+  if (req.body.realname) {
+    let result = await rename(req.body.uid, req.body.realname)
+    if (result.code < 0) {
+      sendJSON({
+        req, res,
+        code: result.code,
+      });
+      return next();
+    }
   }
+
   sendJSON({
     req, res,
     code: 0,
