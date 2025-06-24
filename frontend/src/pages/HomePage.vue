@@ -63,9 +63,9 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 50% 50%;
   background-color: ea-dark(1);
-  height: calc(100vh - $ea-header-height);
+  height: calc(100dvh - $ea-header-height);
   width: 100%;
-  padding: 8vh 10vw;
+  padding: 8dvh 10vw;
   box-sizing: border-box;
 
   .panel-left {
@@ -123,7 +123,7 @@ onMounted(async () => {
   .page-home {
     display: flex;
     flex-direction: column;
-    padding: 5vh 4vw;
+    padding: 5dvh 4vw;
 
     .panel-left {
       margin: 0 0 20px 0;

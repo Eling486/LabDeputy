@@ -15,8 +15,9 @@ import intlHeader from './components/IntlHeader.vue'
 .container {
   position: relative;
   width: 100vw;
-  min-height: calc(100vh - $ea-header-height);
+  min-height: calc(100dvh - $ea-header-height);
   margin-top: $ea-header-height;
+  font-family: "Microsoft YaHei", sans-serif;
 }
 .fade-enter-active {
   transition: opacity 0.1s;
@@ -37,13 +38,13 @@ import intlHeader from './components/IntlHeader.vue'
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - $ea-header-height);
+  height: calc(100dvh - $ea-header-height);
   background-color: ea-dark(1);
 }
 
 .inner-box {
   position: relative;
-  height: 80vh;
+  height: 80dvh;
   width: 80vw;
   box-shadow: $shadow-1;
   border-radius: 10px;

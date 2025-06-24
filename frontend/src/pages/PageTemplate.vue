@@ -37,13 +37,13 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - $ea-header-height);
+  height: calc(100dvh - $ea-header-height);
   background-color: ea-dark(1);
 }
 
 .page-box {
     position: relative;
-  height: 80vh;
+  height: 80dvh;
   width: 80vw;
   box-shadow: $shadow-1;
   border-radius: 10px;

@@ -99,7 +99,7 @@ const onSubmit = async (formEl) => {
   z-index: 99999;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   display: flex;
   justify-content: center;

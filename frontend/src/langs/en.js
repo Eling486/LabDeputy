@@ -48,7 +48,7 @@ const lang = {
         msg_need_realname: 'Please enter real name',
         msg_need_password: 'Please enter password',
         msg_need_repeat_password: 'Please repeat password',
-        msg_error_password_repeat: 'Passwords do not match',
+        msg_error_password_repeat: 'Repeated passwords are different',
         msg_error_password_illegal: 'Password must be at least 6 characters and contain both letters and numbers',
         msg_success_register: 'Registration successful! Redirecting to login page'
     },
@@ -77,7 +77,7 @@ const lang = {
         msg_error_empty_realname: 'Please enter real name',
         msg_error_empty_old_password: 'Please enter old password',
         msg_err_old_password: 'Incorrect old password',
-        msg_error_password_repeat: 'Repeated password is different',
+        msg_error_password_repeat: 'Repeated passwords are different',
         msg_error_password_illegal: 'Password must be at least 6 characters and contain both letters and numbers',
         msg_save_success: 'Settings saved successfully',
         msg_save_success_reload: 'Settings saved successfully. You will be logged out in 5 seconds',

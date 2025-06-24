@@ -55,7 +55,7 @@
             ref="timeRefs"
           >
             <th
-              rowspan="2"
+              :rowspan="(hour == timeRange[1] * 2) ? 1 : 2"
               v-if="hour % 2 === 0"
               class="time-grid-hour"
               :class="{
@@ -99,7 +99,7 @@
             moment().isBetween(
               schedules.monday,
               moment(schedules.monday).add(1, 'w').format('YYYY-MM-DD')
-            )
+            ) && (now >= timeRange[0] && now <= timeRange[1])
           "
         ></div>
         <div
@@ -576,6 +576,24 @@ onBeforeUnmount(() => {
 
     .schedule-header {
       font-size: 12px;
+    }
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    .time-grid tbody tr {
+      /* 在Safari中强制行高一致 */
+      height: 1.5dvh !important;
+      min-height: 0 !important;
+      max-height: 1.5dvh !important;
+      line-height: 1 !important;
+
+      th, td:not(.additional) {
+        /* 确保单元格在Safari中高度一致 */
+        line-height: 1 !important;
+        vertical-align: baseline !important;
+      }
     }
   }
 }

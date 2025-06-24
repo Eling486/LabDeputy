@@ -143,7 +143,6 @@ const handleBookingMouseOut = () => {
 const updateTimeRange = () => {
   let index = equipments.value.findIndex((item) => item.equipment_id == selectedEquipmentId.value)
   timeRange.value = [equipments.value[index].booking_start, equipments.value[index].booking_end]
-  console.log(index, timeRange.value)
 }
 
 const loadSchedule = async (date) => {
@@ -236,14 +235,14 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - $ea-header-height);
+  height: calc(100dvh - $ea-header-height);
   background-color: ea-gray(5);
 
   .operation-panel {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    height: 80vh;
+    height: 80dvh;
     padding: 0 100px;
     width: 50%;
     box-sizing: border-box;
@@ -336,7 +335,7 @@ onMounted(async () => {
   }
 
   .schedule-panel {
-    height: 80vh;
+    height: 80dvh;
   }
 }
 
@@ -353,7 +352,7 @@ onMounted(async () => {
   }
 
   .schedule-panel {
-    margin-bottom: 5vh;
+    margin-bottom: 5dvh;
   }
 }
 </style>
