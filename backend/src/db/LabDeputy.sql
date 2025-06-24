@@ -1,7 +1,7 @@
 ﻿DROP TABLE IF EXISTS user;
 CREATE TABLE user(
     uid INTEGER NOT NULL, --用户ID
-    username TEXT NOT NULL  , --用户名
+    username TEXT  , --用户名
     realname TEXT  , --真实姓名
     password TEXT  , --密码
     invitation TEXT  , --邀请码
@@ -21,6 +21,8 @@ CREATE TABLE equipment(
     equipment_id INTEGER NOT NULL, --设备ID
     name TEXT NOT NULL  , --设备名称
     type TEXT NOT NULL  , --设备类型
+    booking_start INTEGER DEFAULT 0,
+    booking_end INTEGER DEFAULT 24,
     status INTEGER NOT NULL DEFAULT 1, --状态，0-维修中，1-可用
     timestamp TIMESTAMP DEFAULT (DATETIME('now', 'localtime')),
     PRIMARY KEY (equipment_id)
@@ -138,8 +140,11 @@ END;
 
 INSERT INTO USER (username, realname, password, is_admin) VALUES ('admin', 'Admin', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '1');
 INSERT INTO USER (username, password, is_admin) VALUES ('test', 'DKnNle5+P/ek6XYy8GYo5TtgZnAdDt2KsLiDVUG6Nhs=', '0');
+INSERT INTO USER (invitation) VALUES ('wWjpH2wiTw');
+INSERT INTO USER (invitation) VALUES ('wWjpH2wiTw');
+INSERT INTO USER (invitation) VALUES ('wWjpH2wiTw');
 
-INSERT INTO equipment (name, type) VALUES ('BSC', 'Tissue Culture');
+INSERT INTO equipment (name, type, booking_start, booking_end) VALUES ('BSC', 'Tissue Culture', 7, 22);
 
 INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1749787200000, 1749796200000);
 INSERT INTO booking (uid, equipment_id, start_time, end_time) VALUES (1, 1, 1750147200000, 1750154400000);

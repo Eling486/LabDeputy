@@ -2,14 +2,14 @@
   <main class="page">
     <div class="page-box">
       <div class="nav-box">
-        <div class="nav-right">
+        <div class="nav nav-right">
           <div
             class="nav-item nav-btn"
             @click="reset"
             v-if="resetVisible && !saving"
           >
             <el-icon><RefreshLeft /></el-icon>
-            <span class="nav-text">{{ langs[settings.lang].setting.reset }}</span>
+            <span class="nav-text">{{ langs[settings.lang].reset }}</span>
           </div>
           <div
             class="nav-item nav-btn highlight"
@@ -21,7 +21,7 @@
             <el-icon class="is-loading" v-if="saving">
               <Loading />
             </el-icon>
-            <span class="nav-text">{{ langs[settings.lang].setting.save }}</span>
+            <span class="nav-text">{{ langs[settings.lang].save }}</span>
           </div>
         </div>
       </div>
@@ -308,6 +308,12 @@ onMounted(async () => {
     p {
       margin: 0;
     }
+  }
+}
+
+@media (max-width: 900px) {
+  :deep(.el-form) {
+    width: 90% !important;
   }
 }
 </style>

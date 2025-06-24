@@ -3,13 +3,14 @@
     <BoxLoading :loading="loading" />
     <div class="schedule-header">
       <el-button size="small" :icon="ArrowLeft" @click="$emit('prevWeek')">
-        Previous Week
+        {{ langs[settings.lang].booking.prev_week }}
       </el-button>
       <div class="week-period">
         {{ schedules.monday }} ~ {{ moment(schedules.monday).add(1, 'w').format('YYYY-MM-DD') }}
       </div>
       <el-button size="small" @click="$emit('nextWeek')">
-        Next Week<el-icon class="el-icon--right"><ArrowRight /></el-icon>
+        {{ langs[settings.lang].booking.next_week
+        }}<el-icon class="el-icon--right"><ArrowRight /></el-icon>
       </el-button>
     </div>
     <div
@@ -74,6 +75,8 @@
               }"
               :title="hourToText(hour / 2)"
               @mousedown="handleSlotMouseDown(date, hourToText(hour / 2), $event)"
+              @touchstart="handleSlotMouseDown(date, hourToText(hour / 2), $event)"
+              @touchenter="handleSlotMouseEnter(date, hourToText(hour / 2), $event)"
               @mouseenter="handleSlotMouseEnter(date, hourToText(hour / 2), $event)"
             ></td>
           </tr>
@@ -117,6 +120,7 @@
           }"
           :title="`${time_slot.date}: ${time_slot.start} - ${time_slot.end}`"
           @mouseenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
+          @touchenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
         >
           <div class="time-slot-content">
             <span class="time-slot-user">{{ time_slot.user.realname }}</span>
@@ -142,6 +146,7 @@
             }"
             :title="`${time_slot.date}: ${time_slot.start} - ${time_slot.end}`"
             @mouseenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
+            @touchenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
           >
             <div class="time-slot-content"></div>
           </div>
@@ -328,6 +333,30 @@ const handleSlotMouseUp = (event = null, time = null) => {
   return addBooking()
 }
 
+const lastElement = ref()
+
+const handleTouchmove = (e) => {
+  const touch = e.touches[0]
+  const currentElement = document.elementFromPoint(touch.clientX, touch.clientY)
+  if (currentElement !== lastElement.value) {
+    if (lastElement.value) {
+      const leaveEvent = new Event('touchleave')
+      lastElement.value.dispatchEvent(leaveEvent)
+    }
+    if (currentElement) {
+      const enterEvent = new Event('touchenter')
+      currentElement.dispatchEvent(enterEvent)
+    }
+
+    lastElement.value = currentElement
+  }
+}
+
+const handleTouchend = () => {
+  lastElement.value = null
+  handleSlotMouseUp()
+}
+
 const resizeKey = ref(0)
 let timer = null
 
@@ -339,10 +368,15 @@ onMounted(() => {
   timer = setInterval(() => {
     updateNowTime()
   }, 1000 * 60)
+
+  document.addEventListener('touchmove', handleTouchmove)
+  document.addEventListener('touchend', handleTouchend)
 })
 
 onBeforeUnmount(() => {
   clearInterval(timer)
+  document.removeEventListener('touchmove', handleTouchmove)
+  document.removeEventListener('touchend', handleTouchend)
 })
 </script>
 
@@ -530,6 +564,18 @@ onBeforeUnmount(() => {
           border-color: ea-yellow(8);
         }
       }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .schedule-wrap {
+    position: relative;
+    width: 95vw;
+    min-width: 95vw;
+
+    .schedule-header {
+      font-size: 12px;
     }
   }
 }

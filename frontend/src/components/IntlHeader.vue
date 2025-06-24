@@ -9,8 +9,8 @@ Eling486
         <RouterLink v-for="router in routers" :key="router" class="nav-item" :to="router.url">{{
           langs[settings.lang].header[router.text]
         }}</RouterLink>
-        <RouterLink v-if="userData['is_admin']" class="nav-item" to="/admin">{{
-          langs[settings.lang].header.admin
+        <RouterLink v-if="userData && userData.is_admin" class="nav-item" to="/manage">{{
+          langs[settings.lang].header.manage
         }}</RouterLink>
       </div>
     </nav>
@@ -42,9 +42,9 @@ import { storeToRefs } from 'pinia'
 import { logout } from '@/utils'
 
 const langList = {
-  zh_CN: '简'
-  /*zh_TW: '繁',
-  en: 'EN'*/
+  zh_CN: '简',
+  /*zh_TW: '繁',*/
+  en: 'EN'
 }
 
 const store = useStore()
@@ -60,10 +60,10 @@ const routers = ref([
     url: '/booking',
     text: 'booking'
   },
-  {
+  /*{
     url: '/storage',
     text: 'storage'
-  }
+  }*/
 ])
 
 const toggleLang = () => {

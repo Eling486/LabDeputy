@@ -12,6 +12,12 @@
                 "login": {
                     "active": true
                 },
+                "invite": {
+                    "active": true
+                },
+                "register": {
+                    "active": true
+                },
                 "validate": {
                     "active": true
                 },

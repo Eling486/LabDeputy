@@ -86,12 +86,16 @@ const logout = () => {
 
 const loginState = async () => {
     let result = await api('POST', '/api/user/validate').catch(() => {
-        return false
+        return {
+            logined: false
+        }
     })
     if (result.code < 0) {
-        return false
+        return {
+            logined: false
+        }
     }
-    return result.data.logined
+    return result.data
 }
 
 export {

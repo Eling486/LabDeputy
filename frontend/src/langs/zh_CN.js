@@ -3,20 +3,26 @@ const lang = {
     msg_err: '发生错误，请重试',
     msg_err_reload: '发生错误，请刷新重试',
     msg_err_not_admin: '权限不足',
-    msg_click_to_copy: '点击复制',
-    msg_click_to_edit: '点击编辑',
-    msg_copy_success: '已添加到剪贴板',
     msg_click_to_open_in_blank: '新标签页中打开',
+    reconfirmation: '再次确认',
     confirm: '确定',
     cancel: '取消',
     save: '保存',
     reset: '重置',
     delete: '删除',
+    general: {
+        login: '登录',
+        register: '注册',
+        username: '用户名',
+        realname: '真实姓名',
+        equipment: '仪器',
+        hour_attr: '小时'
+    },
     header: {
         home: '首页',
         booking: '预约',
         storage: '库存',
-        admin: '管理',
+        manage: '管理',
         setting: '设置',
         logout: '登出'
     },
@@ -30,10 +36,29 @@ const lang = {
     },
     login: {
         login: '登录',
+        register: '注册',
         username: '用户名',
+        realname: '真实姓名',
         password: '密码',
+        password_repeat: '确认密码',
         msg_need_username: '请输入用户名',
+        msg_need_realname: '请输入真实姓名',
         msg_need_password: '请输入密码',
+        msg_need_repeat_password: '请重复密码',
+        msg_error_password_repeat: '两次输入的密码不一致',
+        msg_error_password_illegal: '密码需至少6位，包含字母及数字',
+        msg_success_register: '注册成功！即将跳转至登录'
+    },
+    booking: {
+        epuipment_placeholder: '请选择要预约的仪器',
+        booking_tips: '请在时间表中按住并拖动来选择时间段',
+        booking_list: '预约以下时段：',
+        booking: '预约',
+        prev_week: '上一周',
+        next_week: '下一周',
+        msg_success_booked: '预约成功',
+        msg_error_booking: '预约失败',
+        msg_error_time_clash: '时段冲突',
     },
     setting: {
         uid: '用户ID',
@@ -53,6 +78,14 @@ const lang = {
         msg_error_password_illegal: '密码需至少6位，包含字母及数字',
         msg_save_success: '设置保存成功',
         msg_save_success_reload: '设置保存成功，将在5秒后登出',
+    },
+    manage: {
+        nav_user: '成员管理',
+        invite_count: '邀请人数',
+        generate_invitation: '生成邀请链接',
+        generate_invitation_confirm: '是否确定生成邀请链接',
+        invitation_link_title: '邀请链接（点击选中）',
+        alert_invite_user: '邀请新成员'
     }
 }
 

@@ -1,26 +1,7 @@
 <script setup>
-import { RouterView, useRouter } from 'vue-router'
+import { RouterView } from 'vue-router'
 import intlHeader from './components/IntlHeader.vue'
-import { loginState } from './utils'
 
-const router = useRouter()
-
-const loginRedirect = async () => {
-  let isLogin = await loginState()
-  const pathname = window.location.pathname
-  if (!isLogin && pathname !== '/login') {
-    let route = {
-      path: '/login',
-      query: {
-        redirect: pathname
-      }
-    }
-
-    router.push(route)
-  }
-}
-
-loginRedirect()
 </script>
 
 <template>
@@ -81,9 +62,12 @@ loginRedirect()
   font-size: 14px;
   box-sizing: border-box;
 
-  .nav-right {
-    margin-left: auto;
+  .nav {
     display: flex;
+
+    &.nav-right {
+      margin-left: auto;
+    }
   }
 
   .nav-item {
@@ -104,13 +88,16 @@ loginRedirect()
 }
 
 @media (max-width: 900px) {
-  .inner-box {
-    height: 100%;
-    width: 100%;
-    border-radius: 0;
-    box-sizing: border-box;
-    padding-top: 0;
+
+  .page-box {
+    height: 100% !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    padding-top: 0 !important;
   }
+
   .nav-box {
     position: relative;
     top: 0;
@@ -141,10 +128,6 @@ loginRedirect()
         background-color: ea-main(2);
       }
     }
-  }
-
-  .ep-details-wrap {
-    width: 95% !important;
   }
 }
 

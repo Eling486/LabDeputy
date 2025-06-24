@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useStore = defineStore('LabDeputy', {
   state: () => ({
     settings: {
-      lang: 'zh_CN',
+      lang: 'en',
     },
     token: null,
     userData: null

@@ -2,11 +2,11 @@
   <main class="page-booking">
     <BoxLoading :loading="loading" />
     <div class="operation-panel">
-      <div class="panel-title">Equipment</div>
+      <div class="panel-title">{{ langs[settings.lang].general.equipment }}</div>
       <el-select
         v-model="selectedEquipmentId"
-        placeholder="Select an Equipment"
-        style="width: 400px"
+        :placeholder="langs[settings.lang].booking.epuipment_placeholder"
+        style="width: 100%"
       >
         <el-option
           v-for="equipment in equipments"
@@ -19,8 +19,8 @@
       <div class="booking-list-title panel-title">
         {{
           bookingList.length > 0
-            ? 'Book the following time periods:'
-            : 'Please click and drag in the time table'
+            ? langs[settings.lang].booking.booking_list
+            : langs[settings.lang].booking.booking_tips
         }}
       </div>
       <el-scrollbar class="booking-list">
@@ -41,7 +41,16 @@
               <span class="time-start">{{ booking.start }}</span>
               <span class="time-to">−</span>
               <span class="time-end">{{ booking.end }}</span>
-              <span class="time-period">{{ moment(`${booking.date} ${booking.end}`).diff(`${booking.date} ${booking.start}`, 'hours', true)}} hr</span>
+              <span class="time-period"
+                >{{
+                  moment(`${booking.date} ${booking.end}`).diff(
+                    `${booking.date} ${booking.start}`,
+                    'hours',
+                    true
+                  )
+                }}
+                {{ langs[settings.lang].general.hour_attr }}</span
+              >
             </div>
             <div class="del-btn" @click="removeBooking(index)">
               <el-icon :size="16"><Close /></el-icon>
@@ -50,7 +59,9 @@
         </template>
       </el-scrollbar>
       <div class="btn-wrap" v-if="bookingList.length > 0">
-        <el-button type="primary" @click="submitBooking()" :loading="submitting">Book</el-button>
+        <el-button type="primary" @click="submitBooking()" :loading="submitting">{{
+          langs[settings.lang].booking.booking
+        }}</el-button>
       </div>
     </div>
     <div class="schedule-panel">
@@ -61,7 +72,7 @@
         :dates="dates"
         :tempTimeSlots="bookingList"
         @add-booking="addBooking"
-        :time-range="[0, 24]"
+        :time-range="timeRange"
         :highlight="highlightBooking"
         :loading="scheduleLoading"
         @prevWeek="prevWeek"
@@ -98,6 +109,7 @@ const schedules = ref({})
 
 const bookingList = ref([])
 const highlightBooking = ref(null)
+const timeRange = ref([0, 24])
 
 const sortBooking = () => {
   bookingList.value.sort(
@@ -128,6 +140,12 @@ const handleBookingMouseOut = () => {
   highlightBooking.value = null
 }
 
+const updateTimeRange = () => {
+  let index = equipments.value.findIndex((item) => item.equipment_id == selectedEquipmentId.value)
+  timeRange.value = [equipments.value[index].booking_start, equipments.value[index].booking_end]
+  console.log(index, timeRange.value)
+}
+
 const loadSchedule = async (date) => {
   scheduleLoading.value = true
   let result = await api(
@@ -137,6 +155,7 @@ const loadSchedule = async (date) => {
     return console.log(err)
   })
   if (result.code !== 0) return console.error('Error:', result.msg)
+  updateTimeRange()
   schedules.value = result.data
 
   dateItems.value = []
@@ -163,13 +182,13 @@ const submitBooking = async () => {
         content += `${err.data[i].date}: ${err.data[i].start} − ${err.data[i].end}<br />`
       }
       bookingList.value = err.data
-      ElMessageBox.alert(content, 'Time Clash', {
-        confirmButtonText: 'OK',
-        dangerouslyUseHTMLString: true,
+      ElMessageBox.alert(content, langs[settings.value.lang].booking.msg_error_time_clash, {
+        confirmButtonText: langs[settings.value.lang].confirm,
+        dangerouslyUseHTMLString: true
       })
     } else {
       bookingList.value = []
-      ElMessage.error('Booking failed')
+      ElMessage.error(langs[settings.value.lang].booking.msg_error_booking)
     }
     loadSchedule(schedules.value.monday)
     return console.log(err)
@@ -181,7 +200,7 @@ const submitBooking = async () => {
   submitting.value = false
   if (result.code == 0) {
     ElMessage({
-      message: 'Successfully booked',
+      message: langs[settings.value.lang].booking.msg_success_booked,
       type: 'success'
     })
   }
@@ -226,6 +245,7 @@ onMounted(async () => {
     align-items: flex-start;
     height: 80vh;
     padding: 0 100px;
+    width: 50%;
     box-sizing: border-box;
     user-select: none;
 
@@ -317,6 +337,23 @@ onMounted(async () => {
 
   .schedule-panel {
     height: 80vh;
+  }
+}
+
+@media (max-width: 900px) {
+  .page-booking {
+    flex-direction: column;
+
+    .operation-panel {
+      padding: 0;
+      height: 35%;
+      max-height: 35%;
+      width: 80vw;
+    }
+  }
+
+  .schedule-panel {
+    margin-bottom: 5vh;
   }
 }
 </style>

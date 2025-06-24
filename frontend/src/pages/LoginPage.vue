@@ -13,7 +13,11 @@
         <el-form-item :label="langs[settings.lang].login.username" prop="username">
           <el-input v-model="userData.username" style="width: 220px" />
         </el-form-item>
-        <el-form-item :label="langs[settings.lang].login.password" prop="password" :error="errorMsg">
+        <el-form-item
+          :label="langs[settings.lang].login.password"
+          prop="password"
+          :error="errorMsg"
+        >
           <el-input
             v-model="userData.password"
             type="password"
@@ -22,7 +26,9 @@
           />
         </el-form-item>
         <el-form-item :style="{ float: 'right' }">
-          <el-button type="primary" @click="onSubmit(loginFormRef)">Login</el-button>
+          <el-button type="primary" @click="onSubmit(loginFormRef)">{{
+            langs[settings.lang].login.login
+          }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -34,10 +40,10 @@ import { reactive, inject, ref } from 'vue'
 import { login } from '../utils'
 import { useStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useRouter, useRoute } from "vue-router"
+import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 const store = useStore()
 const { settings } = storeToRefs(store)
@@ -75,14 +81,14 @@ const onSubmit = async (formEl) => {
     if (valid) {
       let result = await login(userData.username, userData.password)
       if (result.code < 0) {
-        return errorMsg.value = result.msg
+        return (errorMsg.value = result.msg)
       }
-      if(route.query.redirect){
+      if (route.query.redirect) {
         return router.push(route.query.redirect)
       }
       return router.push('/')
     }
-    return errorMsg.value = langs[settings.value.lang].msg_err
+    return (errorMsg.value = langs[settings.value.lang].msg_err)
   })
 }
 </script>

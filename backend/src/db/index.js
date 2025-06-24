@@ -14,7 +14,7 @@ class db {
                 return await this.search(`SELECT * FROM user WHERE uid = ?`, [uid])
             },
             updatePasswordByUid: async (uid, password) => {
-                let err = await this.runSync(`UPDATE user SET password=? WHERE uid = ?;`, [ password, uid])
+                let err = await this.runSync(`UPDATE user SET password=? WHERE uid = ?;`, [password, uid])
                 if (err) {
                     global.logger.error(err)
                     return -1
@@ -22,8 +22,23 @@ class db {
                 return 0
             },
             updateRealnameByUid: async (uid, realname) => {
-                console.log(uid, realname)
                 let err = await this.runSync(`UPDATE user SET realname=? WHERE uid = ?;`, [realname, uid])
+                if (err) {
+                    global.logger.error(err)
+                    return -1
+                };
+                return 0
+            },
+            addInvitation: async (invitation) => {
+                let err = await this.runSync(`INSERT INTO user (invitation) VALUES (?);`, [invitation])
+                if (err) return -1;
+                return 0
+            },
+            getByInvitation: async (invitation) => {
+                return await this.search(`SELECT * FROM user WHERE invitation = ? AND username IS NULL;`, [invitation])
+            },
+            updateAllByUid: async (uid, username, password, realname) => {
+                let err = await this.runSync(`UPDATE user SET username=?, password=?, realname=? WHERE uid = ?;`, [username, password, realname, uid])
                 if (err) {
                     global.logger.error(err)
                     return -1
