@@ -166,7 +166,7 @@ const save = async () => {
     return
   }
 
-  let passwordRe = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
+  let passwordRe = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*#?&]{6,}$/)
 
   if (userData.value.password && !passwordRe.test(userData.value.password)) {
     ElMessage({
