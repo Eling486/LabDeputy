@@ -43,6 +43,9 @@
                     },
                     "submit": {
                         "active": true
+                    },
+                    "cancel": {
+                        "active": true
                     }
                 }
             },

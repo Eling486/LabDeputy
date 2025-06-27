@@ -68,6 +68,17 @@ class db {
                     return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE ((booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [from, to, status])
                 }
                 return await this.search(`SELECT booking_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE (booking.equipment_id = ? AND (booking.start_time >= ? AND booking.start_time < ?) AND booking.status = ?)`, [equipment_id, from, to, status])
+            },
+            getByBookingId: async (booking_id) => {
+                return await this.search(`SELECT booking_id, equipment_id, start_time, end_time, status, user.uid, username, realname FROM user INNER JOIN booking ON user.uid = booking.uid WHERE booking.booking_id = ?`, [booking_id])
+            },
+            updateStatus: async (booking_id, status) => {
+                let err = await this.runSync(`UPDATE booking SET status = ? WHERE booking_id = ?;`, [status, booking_id])
+                if (err) {
+                    global.logger.error(err)
+                    return -1
+                };
+                return 0
             }
         }
 

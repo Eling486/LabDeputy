@@ -75,8 +75,9 @@
         :time-range="timeRange"
         :highlight="highlightBooking"
         :loading="scheduleLoading"
-        @prevWeek="prevWeek"
-        @nextWeek="nextWeek"
+        @prev-week="prevWeek"
+        @next-week="nextWeek"
+        @cancel-booking="cancelBooking"
       />
     </div>
   </main>
@@ -203,6 +204,29 @@ const submitBooking = async () => {
       type: 'success'
     })
   }
+  loadSchedule(schedules.value.monday)
+}
+
+const cancelBooking = async (booking_id) => {
+  submitting.value = true
+  console.log(booking_id)
+  let result = await api('POST', `/api/equipment/booking/cancel`, {
+    equipment_id: selectedEquipmentId.value,
+    booking_id: booking_id
+  }).catch((err) => {
+    submitting.value = false
+    loadSchedule(schedules.value.monday)
+    return console.log(err)
+  })
+
+  if (result.code !== 0) return console.error('Error:', result.msg)
+  if (result.code == 0) {
+    ElMessage({
+      message: langs[settings.value.lang].booking.msg_success_canceled,
+      type: 'success'
+    })
+  }
+  submitting.value = false
   loadSchedule(schedules.value.monday)
 }
 

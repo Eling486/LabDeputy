@@ -122,6 +122,9 @@
           @mouseenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
           @touchenter="handleSlotMouseUp($event, hourToText(textToHour(time_slot.start) - 0.5))"
         >
+          <div class="time-slot-del" v-if="(time_slot.user.uid === userData.uid) || userData.is_admin" @click="$emit('cancelBooking', time_slot.booking_id)">
+            <el-icon :size="12"><Close /></el-icon>
+          </div>
           <div class="time-slot-content">
             <span class="time-slot-user">{{ time_slot.user.realname }}</span>
           </div>
@@ -178,7 +181,7 @@
 <script setup>
 import { ref, onMounted, inject, onBeforeUnmount, watch } from 'vue'
 import moment from 'moment'
-import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Close } from '@element-plus/icons-vue'
 import { useStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
@@ -536,6 +539,29 @@ onBeforeUnmount(() => {
       &.self {
         background-color: ea-blue(5);
         border-color: ea-blue(8);
+      }
+
+      .time-slot-del {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        line-height: 12px;
+        top: 0;
+        right: 0;
+        border-radius: 2px;
+        color: $ea-white;
+        opacity: 0;
+
+        &:hover {
+          background-color: ea-main(3);
+        }
+      }
+
+      &:hover {
+        .time-slot-del {
+          opacity: 1;
+          cursor: pointer;
+        }
       }
 
       .time-slot-content {

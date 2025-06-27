@@ -60,6 +60,7 @@ const lang = {
         prev_week: 'Previous Week',
         next_week: 'Next Week',
         msg_success_booked: 'Successfully booked',
+        msg_success_canceled: 'Successfully canceled',
         msg_error_booking: 'Booking failed',
         msg_error_time_clash: 'Time Clash',
     },

@@ -57,6 +57,7 @@ const lang = {
         prev_week: '上一周',
         next_week: '下一周',
         msg_success_booked: '预约成功',
+        msg_success_canceled: '预约已取消',
         msg_error_booking: '预约失败',
         msg_error_time_clash: '时段冲突',
     },
